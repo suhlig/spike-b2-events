@@ -20,14 +20,21 @@ Assuming the shared HMAC secret is `eqdIy6lTcbDXsGFJnyD5eK83sCQUIrPH`, we can st
 $ B2_EVENT_NOTIFICATIONS_SHARED_SECRET=eqdIy6lTcbDXsGFJnyD5eK83sCQUIrPH go run .
 ```
 
-and test it with
+and test it locally with
 
 ```command
 $ curl \
     --data @b2/events.json \
     --header 'Content-Type: application/json' \
-    --header 'X-Bz-Event-Notification-Signature: v1=ed43d3f65391cdeef81783321a5c3408977050e4747085023fd6ca02cdf71543' \
+    --header 'X-Bz-Event-Notification-Signature: v1=8ac50cc33d141ea5450a1c3e7c85c2cc98f7ba8b5043ecee56ecb61385d04920' \
   http://127.0.0.1:62057/
 ```
 
 Replace the URL with the output of `tailscale funnel 62057`, if you use that one.
+
+An end-to-end test can be performed with
+
+```command
+$ echo 3 > /tmp/three
+$ b2 file upload suhlig-spike-event-notifications /tmp/three three
+```

@@ -47,11 +47,13 @@ func mainE() error {
 		notification := new(b2.EventNotification)
 
 		if err := c.Bind(notification); err != nil {
+			e.Logger.Errorf("parsing the request failed: %w", err)
 			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 		}
 
 		if err := c.Validate(notification); err != nil {
-			return fmt.Errorf("validation failed: %w", err)
+			e.Logger.Errorf("validating the request failed: %w", err)
+			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 		}
 
 		for _, event := range notification.Events {
