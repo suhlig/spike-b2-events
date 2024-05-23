@@ -1,0 +1,16 @@
+{
+  "events": [
+    {
+      "accountId": "5edb485e5cbc",
+      "bucketId": "458e6d3b3498a56e85fc0b1c",
+      "bucketName": "suhlig-spike-event-notifications",
+      "eventTimestamp": 1716483806343,
+      "eventType": "b2:ObjectCreated:Upload",
+      "eventVersion": 1,
+      "matchedRuleName": "on-upload",
+      "objectName": "one",
+      "objectSize": 2,
+      "objectVersionId": "4_z458e6d3b3498a56e85fc0b1c_f406122d4e41c2e15_d20240523_m170326_c001_v0001153_t0001_u01716483806337"
+    }
+  ]
+}
