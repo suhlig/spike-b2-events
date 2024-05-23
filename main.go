@@ -33,10 +33,10 @@ func mainE() error {
 
 	hmacMw, err := hmac.NewAuthenticatorMiddleware(os.Getenv("B2_EVENT_NOTIFICATIONS_SHARED_SECRET"))
 
-	if err == nil {
-		e.Use(hmacMw.Process)
-	} else {
+	if err != nil {
 		e.Logger.Warnf("%s, if you want to verify the request payload set the environment variable B2_EVENT_NOTIFICATIONS_SHARED_SECRET", err)
+	} else {
+		e.Use(hmacMw.Process)
 	}
 
 	e.GET("/", func(c echo.Context) error {
