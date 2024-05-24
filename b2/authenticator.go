@@ -1,4 +1,4 @@
-package hmac
+package b2
 
 import (
 	"bytes"
@@ -13,20 +13,25 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type Authenticator struct {
+type HmacAuthenticator struct {
 	sharedKey string
 }
 
-func NewAuthenticatorMiddleware(sharedKey string) (*Authenticator, error) {
+func NewHmacAuthenticator(sharedKey string) (*HmacAuthenticator, error) {
 	if sharedKey == "" {
 		return nil, errors.New("shared key must not be empty")
 	}
 
-	return &Authenticator{sharedKey: sharedKey}, nil
+	return &HmacAuthenticator{sharedKey: sharedKey}, nil
 }
 
-func (hma *Authenticator) Process(next echo.HandlerFunc) echo.HandlerFunc {
+func (hma *HmacAuthenticator) Process(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
+		if c.Request().Method != http.MethodPost {
+			c.Logger().Debugf("skipping HMAC authentication for method %s", c.Request().Method)
+			return next(c)
+		}
+
 		receivedSignature, err := parseReceivedSignature(c.Request())
 
 		if err != nil {
@@ -70,7 +75,7 @@ func parseReceivedSignature(request *http.Request) (string, error) {
 	return parts[1], nil
 }
 
-func (hma *Authenticator) calculateSignature(request *http.Request) (string, error) {
+func (hma *HmacAuthenticator) calculateSignature(request *http.Request) (string, error) {
 	body, err := io.ReadAll(request.Body)
 
 	if err != nil {
@@ -88,5 +93,4 @@ func (hma *Authenticator) calculateSignature(request *http.Request) (string, err
 	}
 
 	return fmt.Sprintf("%x", hash.Sum(nil)), nil
-
 }

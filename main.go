@@ -10,7 +10,6 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
 	"github.com/suhlig/spike-b2-events/b2"
-	"github.com/suhlig/spike-b2-events/hmac"
 )
 
 func main() {
@@ -31,7 +30,7 @@ func mainE() error {
 	e.Use(middleware.Recover())
 	e.Validator = &b2.EventNotificationValidator{Validator: validator.New()}
 
-	hmacMw, err := hmac.NewAuthenticatorMiddleware(os.Getenv("B2_EVENT_NOTIFICATIONS_SHARED_SECRET"))
+	hmacMw, err := b2.NewHmacAuthenticator(os.Getenv("B2_EVENT_NOTIFICATIONS_SHARED_SECRET"))
 
 	if err != nil {
 		e.Logger.Warnf("%s, if you want to verify the request payload set the environment variable B2_EVENT_NOTIFICATIONS_SHARED_SECRET", err)
@@ -40,7 +39,7 @@ func mainE() error {
 	}
 
 	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello World\n")
+		return c.String(http.StatusOK, "B2 Event Notifications Server; see https://github.com/suhlig/spike-b2-events\n")
 	})
 
 	e.POST("/", func(c echo.Context) error {
@@ -57,7 +56,7 @@ func mainE() error {
 		}
 
 		for _, event := range notification.Events {
-			e.Logger.Infof("Object %s was uploaded at %s", event.ObjectName, event.EventTimestamp)
+			e.Logger.Infof("Object %s was uploaded to %s at %s", event.ObjectName, event.BucketName, event.EventTimestamp)
 		}
 
 		return c.String(http.StatusOK, fmt.Sprintf("processed %d events\n", len(notification.Events)))
