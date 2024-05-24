@@ -47,8 +47,8 @@ func (hma *HmacAuthenticator) Process(next echo.HandlerFunc) echo.HandlerFunc {
 		}
 
 		if calculatedSig != receivedSignature {
-			c.Logger().Errorf("HMAC signatures do not match: %s != %s", calculatedSig, receivedSignature)
-			return echo.NewHTTPError(http.StatusBadRequest, "HMAC signatures do not match")
+			c.Logger().Errorf("HMAC signatures do not match: calculated %s != received %s", calculatedSig, receivedSignature)
+			return echo.NewHTTPError(http.StatusUnauthorized, "HMAC signature does not match")
 		}
 
 		return next(c)
